@@ -39,7 +39,7 @@ namespace edu {
 						for (const T& val : other) {
 							push_front(val);
 						}
-					} 
+					}
 
 					~LinkedList() { clear(); } //Destructor which implements the clear operator. 
 
@@ -61,7 +61,9 @@ namespace edu {
 
 				public: // THIS IS WHERE I BEGIN ALL ABOVE IS DONE
 					void clear() {}
-					iterator insert(iterator where, const T &value) {}
+					iterator insert(iterator where, const T &value) {
+
+					}
 					iterator erase(iterator where) {}
 					iterator erase(iterator first, iterator last) {}
 					void push_back(const T &value) {}
