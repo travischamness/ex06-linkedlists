@@ -22,10 +22,11 @@ namespace edu {
 					public:
 						const T &operator*() { return _node->_data; }
 						const T &operator*() const { return _node->_data; }
-						iterator &operator++() { _node = _node->_next; return *this; }
+						iterator &operator++() { _node = _node->_next; return *this; } //SegFualt Line 25
 						iterator operator++(int) { iterator before(*this); _node = _node->_next; return before; }
 						bool operator==(const iterator &other) { return other._node == _node; }
 						bool operator!=(const iterator &other) { return !operator==(other); }
+						bool operator<(const iterator &other) {return _node < other._node;}
 						Node *node() { return _node; }
 					private:
 						Node *_node;
@@ -34,9 +35,7 @@ namespace edu {
 				public:
 					LinkedList() : _size(0), head(nullptr), tail(nullptr){} //Constructor only needs some initialized basic varial
 					LinkedList(const LinkedList &other) : _size(0), head(nullptr), tail(nullptr) {//Deep copy. This is the entire implimentation of the deep copy. The push_front(val) creates for you the list of data from the "other" list.
-						for (const T& val : other) {
-							push_front(val);
-						}
+						for (const T &val: other) push_front(val);
 					}
 
 					~LinkedList() { clear(); } //Destructor which implements the clear operator. 
@@ -55,18 +54,34 @@ namespace edu {
 					}
 					const iterator begin() const { return iterator(head);  } //
 					iterator end() {return iterator(nullptr);} //This is the end case for the end of the loop
-					const iterator end() const {}
+					const iterator end() const {return iterator(nullptr);}
 
 				public: // THIS IS WHERE I BEGIN ALL ABOVE IS DONE
-					void clear() {
-
+					void clear() { //Status Code: Situation Bueno
+						erase(begin(),end());
+						delete head;
+						head = tail = nullptr;
+						_size = 0;
 					    }
 
-					iterator insert(iterator where, const T &value) {
-
+					iterator insert(iterator where, const T &value) {//Status Code: Situation Bueno
+					    if(where.node()->_next == nullptr){
+					        Node *newNode = new Node(value,nullptr);
+					        where.node()->_next = newNode;
+					        tail = newNode;
+					        _size++;
+					    }
+					    else{
+                            Node *newNode = new Node(value,nullptr);
+                            Node *holdingTheFort = where.node()->_next;
+                            where.node()->_next = newNode;
+                            newNode->_next = holdingTheFort;
+                            _size++;
+                            delete holdingTheFort;
+					    }
 					}
 					//Erases node after where.
-					iterator erase(iterator where) {
+					iterator erase(iterator where) { // Status Code: Situation Bueno
 					    if(where.node()->_next == nullptr){
 					        return where;
 					    }
@@ -85,7 +100,7 @@ namespace edu {
 					    }
 					}
 					void push_back(const T &value) { // Status Code: Situation Bueno
-                        Node *newNode = new Node(value, nullptr/*even though this is to be head, initialize as empty*/);
+                        Node *newNode = new Node(value, nullptr);
 					    if(_size == 0){
 					     head = tail = newNode;//assign value and initialize linked list
 					    }
